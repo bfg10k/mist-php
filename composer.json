@@ -1,0 +1,17 @@
+{
+    "name": "framesofthesource/wraith-php",
+    "description": "Wraith is a lightning-fast, lightweight API mocking tool that takes the hassle out of API dependencies so you can focus on what you do best: coding. With Wraith, you can spin up realistic API responses in seconds, creating a seamless development and testing environment without ever waiting on a live server. It also helps you with testing, helping you create Mock API endpoints for your scenarios! Install Wraith and start coding!",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Frames\\WraithPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Frames"
+        }
+    ],
+    "require": {}
+}
