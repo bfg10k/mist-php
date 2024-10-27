@@ -1,6 +1,6 @@
 {
   "name": "framesofthesource/mist-php",
-  "description": "Mist is a lightning-fast, lightweight API mocking tool that takes the hassle out of API dependencies so you can focus on what you do best: coding. With Mist, you can spin up realistic API responses in seconds, creating a seamless development and testing environment without ever waiting on a live server. It also helps you with testing, helping you create Mock API endpoints for your scenarios! Install Mist and start coding!",
+  "description": "Lightning-fast, lightweight API Mocking tool that takes the hassle out of API dependencies so you can focus on what you do best: coding. With Mist, you can spin up realistic API responses in seconds, creating a seamless development and testing environment without ever waiting on a live server. It also helps you with testing, helping you create Mock API endpoints for your scenarios! Install Mist and start coding!",
   "type": "library",
   "license": "MIT",
   "autoload": {
