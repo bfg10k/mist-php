@@ -2,8 +2,6 @@
 
 namespace Frames\Mist;
 
-namespace Frames\Mist;
-
 class Mist
 {
     private static ?Mist $instance = null;
@@ -39,14 +37,27 @@ class Mist
     }
 
     /**
+     * Register a mock response for a specified HTTP method.
+     *
+     * @param string $method
+     * @param Response $response
+     * @return void
+     */
+    private static function register(string $method, Response $response): void
+    {
+        $instance = self::getInstance();
+        $instance->mocks[$method][] = $response;
+    }
+
+    /**
      * Register a POST mock response.
      *
      * @param Response $response
      * @return void
      */
-    public static function addPost(Response $response): void
+    public static function post(Response $response): void
     {
-        self::getInstance()->mocks['POST'][] = $response;
+        self::register('POST', $response);
     }
 
     /**
@@ -55,9 +66,9 @@ class Mist
      * @param Response $response
      * @return void
      */
-    public static function addGet(Response $response): void
+    public static function get(Response $response): void
     {
-        self::getInstance()->mocks['GET'][] = $response;
+        self::register('GET', $response);
     }
 
     /**
@@ -66,9 +77,9 @@ class Mist
      * @param Response $response
      * @return void
      */
-    public static function addPut(Response $response): void
+    public static function put(Response $response): void
     {
-        self::getInstance()->mocks['PUT'][] = $response;
+        self::register('PUT', $response);
     }
 
     /**
@@ -77,9 +88,9 @@ class Mist
      * @param Response $response
      * @return void
      */
-    public static function addDelete(Response $response): void
+    public static function delete(Response $response): void
     {
-        self::getInstance()->mocks['DELETE'][] = $response;
+        self::register('DELETE', $response);
     }
 
     /**

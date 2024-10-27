@@ -1,9 +1,6 @@
 <?php declare(strict_types=1);
 
 namespace Frames\Mist;
-
-namespace Frames\Mist;
-
 class Response
 {
     private string $path;
