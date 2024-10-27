@@ -2,6 +2,9 @@
 
 namespace Frames\Mist;
 
+use Frames\Mist\Config\Config;
+use Frames\Mist\Http\Response;
+
 class Mist
 {
     private static ?Mist $instance = null;
@@ -10,7 +13,6 @@ class Mist
 
     private function __construct()
     {
-        // Default configuration
         $this->config = new Config();
     }
 

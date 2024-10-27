@@ -2,9 +2,8 @@
 
 require 'vendor/autoload.php';
 
+use Frames\Mist\Config\Config;
 use Frames\Mist\Mist;
-use Frames\Mist\Response;
-use Frames\Mist\Config;
 
 Mist::configure(new Config('127.0.0.1', 8080, false, null, null));
 

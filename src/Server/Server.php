@@ -1,13 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Frames\Mist;
+namespace Frames\Mist\Server;
 
+use Frames\Mist\Config\Config;
+use Frames\Mist\Http\Response;
+use Psr\Http\Message\ServerRequestInterface;
+use React\EventLoop\Loop;
 use React\Http\HttpServer;
+use React\Http\Message\Response as ReactResponse;
 use React\Promise\Promise;
 use React\Socket\SocketServer;
-use Psr\Http\Message\ServerRequestInterface;
-use React\Http\Message\Response as ReactResponse;
-use React\EventLoop\Loop;
 
 /**
  * The Server class is the main entry point for starting the Mist server.
