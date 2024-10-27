@@ -37,60 +37,62 @@ class Mist
     }
 
     /**
-     * Register a mock response for a specified HTTP method.
-     *
-     * @param string $method
-     * @param Response $response
-     * @return void
-     */
-    private static function register(string $method, Response $response): void
-    {
-        $instance = self::getInstance();
-        $instance->mocks[$method][] = $response;
-    }
-
-    /**
      * Register a POST mock response.
      *
-     * @param Response $response
-     * @return void
+     * @param string $path
+     * @return Response
      */
-    public static function post(Response $response): void
+    public static function post(string $path): Response
     {
-        self::register('POST', $response);
+        return self::register('POST', $path);
     }
 
     /**
      * Register a GET mock response.
      *
-     * @param Response $response
-     * @return void
+     * @param string $path
+     * @return Response
      */
-    public static function get(Response $response): void
+    public static function get(string $path): Response
     {
-        self::register('GET', $response);
+        return self::register('GET', $path);
     }
 
     /**
      * Register a PUT mock response.
      *
-     * @param Response $response
-     * @return void
+     * @param string $path
+     * @return Response
      */
-    public static function put(Response $response): void
+    public static function put(string $path): Response
     {
-        self::register('PUT', $response);
+        return self::register('PUT', $path);
     }
 
     /**
      * Register a DELETE mock response.
      *
-     * @param Response $response
-     * @return void
+     * @param string $path
+     * @return Response
      */
-    public static function delete(Response $response): void
+    public static function delete(string $path): Response
     {
-        self::register('DELETE', $response);
+        return self::register('DELETE', $path);
+    }
+
+    /**
+     * Register a mock response for a specified HTTP method.
+     *
+     * @param string $method
+     * @param string $path
+     * @return Response
+     */
+    private static function register(string $method, string $path): Response
+    {
+        $instance = self::getInstance();
+        $response = Response::new($path);
+        $instance->mocks[$method][] = $response;
+        return $response;
     }
 
     /**
