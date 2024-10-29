@@ -8,7 +8,6 @@ require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/example.php';
 
 
-$mocks = Mist::getInstance()->getMocks();
-$config = Mist::getInstance()->getConfig();
 
-Server::run($config, $mocks);
+
+Server::run();

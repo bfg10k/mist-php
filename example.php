@@ -3,18 +3,27 @@
 require 'vendor/autoload.php';
 
 use Frames\Mist\Config\Config;
+use Frames\Mist\Http\Response;
 use Frames\Mist\Mist;
 
 Mist::configure(new Config('127.0.0.1', 8080, false, null, null));
 
 Mist::post('/api/message/{id}')
-    ->headers(['Content-Type' => 'application/json'])
-    ->body(json_encode(['message' => 'Hello, World!']));
+    ->withHeaders(['Content-Type' => 'application/json'])
+    ->staticResponse('{"id": "{$id}"}');
 
+// Define a dynamic response endpoint
 Mist::get('/api/user/{id}')
-    ->headers(['Content-Type' => 'application/json'])
+    ->withHeaders(['Content-Type' => 'application/json'])
     ->dynamicResponse(function ($params, $request) {
-        $id = $params['id'];
-        return ['id' => $id, 'name' => 'User ' . $id];
+        if ($params['id'] == '123') {
+            return Response::new(200, ['status' => 'found', 'user' => $params]);
+        } elseif ($params['id'] == '456') {
+            return Response::new(200, 'User data in plain text format');
+        } else {
+            $response = Response::new(404, 'User not found');
+            $response->addHeader('X-Custom-Header', 'Value');
+            return $response;
+        }
     })
-    ->delay(10000);
+    ->delay(1000);

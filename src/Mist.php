@@ -3,13 +3,13 @@
 namespace Frames\Mist;
 
 use Frames\Mist\Config\Config;
-use Frames\Mist\Http\Response;
+use Frames\Mist\Http\Endpoint;
 
 class Mist
 {
     private static ?Mist $instance = null;
     private Config $config;
-    private array $mocks = [];
+    private array $endpoints = [];
 
     private function __construct()
     {
@@ -39,72 +39,72 @@ class Mist
     }
 
     /**
-     * Register a POST mock response.
+     * Register a POST endpoint.
      *
      * @param string $path
-     * @return Response
+     * @return Endpoint
      */
-    public static function post(string $path): Response
+    public static function post(string $path): Endpoint
     {
         return self::register('POST', $path);
     }
 
     /**
-     * Register a GET mock response.
+     * Register a GET endpoint.
      *
      * @param string $path
-     * @return Response
+     * @return Endpoint
      */
-    public static function get(string $path): Response
+    public static function get(string $path): Endpoint
     {
         return self::register('GET', $path);
     }
 
     /**
-     * Register a PUT mock response.
+     * Register a PUT endpoint.
      *
      * @param string $path
-     * @return Response
+     * @return Endpoint
      */
-    public static function put(string $path): Response
+    public static function put(string $path): Endpoint
     {
         return self::register('PUT', $path);
     }
 
     /**
-     * Register a DELETE mock response.
+     * Register a DELETE endpoint.
      *
      * @param string $path
-     * @return Response
+     * @return Endpoint
      */
-    public static function delete(string $path): Response
+    public static function delete(string $path): Endpoint
     {
         return self::register('DELETE', $path);
     }
 
     /**
-     * Register a mock response for a specified HTTP method.
+     * Register an endpoint for a specified HTTP method.
      *
      * @param string $method
      * @param string $path
-     * @return Response
+     * @return Endpoint
      */
-    private static function register(string $method, string $path): Response
+    private static function register(string $method, string $path): Endpoint
     {
         $instance = self::getInstance();
-        $response = Response::new($path);
-        $instance->mocks[$method][] = $response;
-        return $response;
+        $endpoint = new Endpoint($method, $path);
+        $instance->endpoints[] = $endpoint;
+        return $endpoint;
     }
 
     /**
-     * Retrieve all registered mocks.
+     * Retrieve all registered endpoints.
      *
      * @return array
      */
-    public function getMocks(): array
+    public function getEndpoints(): array
     {
-        return $this->mocks;
+        return $this->endpoints;
     }
 
     /**

@@ -2,133 +2,86 @@
 
 namespace Frames\Mist\Http;
 
+use JsonSerializable;
+use React\Http\Message\Response as ReactResponse;
+
 class Response
 {
-    private string $path;
-    private array $headers;
-    private string $body;
+    private int $statusCode = 200;
+    private array $headers = [];
+    private string $body = '';
+    private array $cookies = [];
 
-    private int $delay = 0;
+    private function __construct() {}
 
-    private bool $isDynamic = false;
-
-    /** @var callable|null */
-    private mixed $dynamicResponse;
-
-    private function __construct(string $path)
+    public static function new(int $statusCode = 200, JsonSerializable|array|string $body = [], array $headers = []): self
     {
-        $this->path = $path;
-        $this->headers = [];
-        $this->body = '';
-        $this->dynamicResponse = null;
+        return (new self())
+            ->withStatusCode($statusCode)
+            ->withBody($body)
+            ->withHeaders($headers);
     }
 
-    /**
-     * Create a new Response instance.
-     *
-     * @param string $path Route path with optional parameters e.g., /api/user/{id}
-     * @return self
-     */
-    public static function new(string $path): self
+    public function withStatusCode(int $statusCode): self
     {
-        return new self($path);
+        $this->statusCode = $statusCode;
+        return $this;
     }
 
-    /**
-     * Set response headers.
-     *
-     * @param array $headers
-     * @return self
-     */
-    public function headers(array $headers): self
+    public function withHeaders(array $headers): self
     {
         $this->headers = $headers;
         return $this;
     }
 
-    /**
-     * Set response body.
-     *
-     * @param string $body
-     * @return self
-     */
-    public function body(string $body): self
+    public function addHeader(string $key, string $value): self
+    {
+        $this->headers[$key] = $value;
+        return $this;
+    }
+
+    public function addCookie(string $name, string $value, array $options = []): self
+    {
+        $this->cookies[$name] = ['value' => $value, 'options' => $options];
+        return $this;
+    }
+
+    public function withBody(JsonSerializable|array|string $body): self
+    {
+        $this->body = (is_array($body) || $body instanceof JsonSerializable) ? json_encode($body) : $body;
+        return $this;
+    }
+
+    public function setBody(string $body): self
     {
         $this->body = $body;
         return $this;
     }
 
-    /**
-     * Set a dynamic response callable.
-     *
-     * @param callable $callback Function with signature function(array $params, \Psr\Http\Message\ServerRequestInterface $request): array
-     * @return self
-     */
-    public function dynamicResponse(callable $callback): self
-    {
-        $this->isDynamic = true;
-        $this->dynamicResponse = $callback;
-        return $this;
-    }
-
-    /**
-     * @param int $milliseconds Allows to add a delay for handing the response. Time is in milliseconds.
-     * @return $this
-     */
-    public function delay(int $milliseconds): self
-    {
-        $this->delay = $milliseconds;
-        return $this;
-    }
-
-    /**
-     * Get the route path.
-     */
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    /**
-     * Get the response headers.
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    /**
-     * Get the response body.
-     */
     public function getBody(): string
     {
         return $this->body;
     }
 
-    /**
-     * Check if the content is dynamic.
-     *
-     * @return bool True if the content is dynamic, false otherwise.
-     */
-    public function isDynamic(): bool
+    public function toReactResponse(): ReactResponse
     {
-        return $this->isDynamic;
-    }
+        // Add cookies to headers
+        if (!empty($this->cookies)) {
+            $cookieStrings = [];
+            foreach ($this->cookies as $name => $cookie) {
+                $cookieString = urlencode($name) . '=' . urlencode($cookie['value']);
+                foreach ($cookie['options'] as $key => $value) {
+                    $cookieString .= "; $key=$value";
+                }
+                $cookieStrings[] = $cookieString;
+            }
+            $this->headers['Set-Cookie'] = $cookieStrings;
+        }
 
-    /**
-     * Get the dynamic response callable.
-     */
-    public function getDynamicResponse(): ?callable
-    {
-        return $this->dynamicResponse;
-    }
-
-    /**
-     * Get the delay time.
-     * @return int The delay time in milliseconds.
-     */
-    public function getDelay(): int
-    {
-        return $this->delay;
+        return new ReactResponse(
+            $this->statusCode,
+            $this->headers,
+            $this->body
+        );
     }
 }

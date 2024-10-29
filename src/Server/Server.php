@@ -3,63 +3,33 @@
 namespace Frames\Mist\Server;
 
 use Frames\Mist\Config\Config;
-use Frames\Mist\Http\Response;
+use Frames\Mist\Mist;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\Http\HttpServer;
 use React\Http\Message\Response as ReactResponse;
-use React\Promise\Promise;
 use React\Socket\SocketServer;
 
-/**
- * The Server class is the main entry point for starting the Mist server.
- * It uses ReactPHP to provide a non-blocking, asynchronous HTTP server
- * that allows API mocking for development and testing purposes.
- */
 class Server
 {
     /**
-     * Run the Mist server with given configuration and mock responses.
-     *
-     * @param Config $config Configuration object with host, port, and SSL settings.
-     * @param Response[] $mocks An array of Response objects, each defining
-     *                          a mock response for an API route.
+     * Run the Mist server with the configured endpoints.
      *
      * @return void
      */
-    public static function run(Config $config, array $mocks): void
+    public static function run(): void
     {
-        $server = new HttpServer(function (ServerRequestInterface $request) use ($mocks) {
-            $method = strtoupper($request->getMethod());
-            $path = $request->getUri()->getPath();
-            if (!isset($mocks[$method])) {
-                return self::notFoundResponse();
-            }
+        $mist = Mist::getInstance();
+        $config = $mist->getConfig();
+        $endpoints = $mist->getEndpoints();
 
-            foreach ($mocks[$method] as $mock) {
-                $pattern = self::convertPathToRegex($mock->getPath());
-                if (preg_match($pattern, $path, $matches)) {
-                    $params = self::extractPathParams($matches);
-
-                    return new Promise(function ($resolve) use ($mock, $params, $request) {
-                        Loop::get()->addTimer($mock->getDelay() / 1000, function () use ($mock, $params, $request, $resolve) {
-                            $resolve(match ($mock->isDynamic()) {
-                                true => new ReactResponse(
-                                    200,
-                                    $mock->getHeaders(),
-                                    json_encode(call_user_func($mock->getDynamicResponse(), $params, $request))
-                                ),
-                                false => new ReactResponse(
-                                    200,
-                                    $mock->getHeaders(),
-                                    $mock->getBody()
-                                ),
-                            });
-                        });
-                    });
+        $server = new HttpServer(function (ServerRequestInterface $request) use ($endpoints) {
+            foreach ($endpoints as $endpoint) {
+                $params = $endpoint->match($request);
+                if ($params !== null) {
+                    return $endpoint->handle($request, $params);
                 }
             }
-
             return self::notFoundResponse();
         });
 
@@ -68,33 +38,22 @@ class Server
 
     private static function startSocketServer(HttpServer $server, Config $config): void
     {
-        $host = $config->getHost();
-        $port = $config->getPort();
+        $host = $config->host;
+        $port = $config->port;
         $socketAddress = "{$host}:{$port}";
 
-        $context = $config->isHttps() ? [
+        $context = $config->https ? [
             'tls' => [
-                'local_cert' => $config->getCertPath(),
-                'local_pk' => $config->getKeyPath(),
+                'local_cert' => $config->certPath,
+                'local_pk' => $config->keyPath,
             ]
         ] : [];
 
         $socket = new SocketServer($socketAddress, $context);
         $server->listen($socket);
 
-        $protocol = $config->isHttps() ? "https" : "http";
+        $protocol = $config->https ? "https" : "http";
         echo "Mist Server running at {$protocol}://{$host}:{$port}\n";
-    }
-
-    private static function convertPathToRegex(string $path): string
-    {
-        $regex = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $path);
-        return "#^{$regex}$#";
-    }
-
-    private static function extractPathParams(array $matches): array
-    {
-        return array_filter($matches, fn($key) => !is_int($key), ARRAY_FILTER_USE_KEY);
     }
 
     private static function notFoundResponse(): ReactResponse
