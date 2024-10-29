@@ -12,8 +12,9 @@ It can also help you with testing, helping you create Mock API endpoints for you
 Wether you're a Frontend Developer or you need a way to Mock your APIs for testing or your pipelines...
 **Install Mist and start coding!**
 
-By leveraging a ReactPHP server, Mist can help you reduce your pipelines execution time, handle a decent amount of 
-requests asynchronously with little processor and memory usage... and everything using the PHP you already know and love!
+By leveraging a ReactPHP server, Mist helps you reduce your pipelines execution time, allowing you to run your tests in
+paralell as it can handle a decent amount of requests asynchronously with little processor and memory usage... 
+**and everything using the PHP you already know and love!**
 
 ## Start using Mist
 
@@ -69,7 +70,8 @@ a Framework for developing APIs but a simple tool to mock them!
 Mist comes with handy methods that will help you adding delay, or passing simple functions so you can add little logic
 to customize your responses.
 
-If you want to do a more advance usage (organize your Mist endpoints in different files and/or folders) you can go and check the full Response definition reference or the [*Mist Config* entry in the docs]() 
+If you want to do a more advance usage (organize your Mist endpoints in different files and/or folders) you can go and
+check the full Response definition reference or the [*Mist Config* entry in the docs]() 
 
 ### Using Mist with Symfony
 

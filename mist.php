@@ -1,20 +1,14 @@
 <?php
 
-require 'vendor/autoload.php';
+namespace Frames\Mist;
 
-use Frames\Mist\Config\Config;
-use Frames\Mist\Mist;
+use Frames\Mist\Server\Server;
 
-Mist::configure(new Config('127.0.0.1', 8080, false, null, null));
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/example.php';
 
-Mist::post('/api/message/{id}')
-    ->headers(['Content-Type' => 'application/json'])
-    ->body(json_encode(['message' => 'Hello, World!']));
 
-Mist::get('/api/user/{id}')
-    ->headers(['Content-Type' => 'application/json'])
-    ->dynamicResponse(function ($params, $request) {
-        $id = $params['id'];
-        return ['id' => $id, 'name' => 'User ' . $id];
-    })
-    ->delay(10000);
+$mocks = Mist::getInstance()->getMocks();
+$config = Mist::getInstance()->getConfig();
+
+Server::run($config, $mocks);
