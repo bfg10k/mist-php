@@ -13,6 +13,8 @@ class Endpoint
     private array $conditions = [];
     private array $headers = [];
     private ?Response $staticResponse = null;
+
+    /** @var ?callable */
     private $dynamicResponse = null;
     private int $delay = 0;
 
@@ -114,7 +116,7 @@ class Endpoint
      * @param array $params
      * @return Promise
      */
-    public function handle(ServerRequestInterface $request, array $params)
+    public function handle(ServerRequestInterface $request, array $params): Promise
     {
         return new Promise(function ($resolve) use ($request, $params) {
             $action = function () use ($request, $params, $resolve) {

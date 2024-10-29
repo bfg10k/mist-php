@@ -100,7 +100,7 @@ class Mist
     /**
      * Retrieve all registered endpoints.
      *
-     * @return array
+     * @return Endpoint[]
      */
     public function getEndpoints(): array
     {
