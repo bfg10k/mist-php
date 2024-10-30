@@ -3,6 +3,12 @@
   "description": "Lightning-fast, lightweight API Mocking tool that takes the hassle out of API dependencies so you can focus on what you do best: coding. With Mist, you can spin up realistic API responses in seconds, creating a seamless development and testing environment without ever waiting on a live server. It also helps you with testing, helping you create Mock API endpoints for your scenarios! Install Mist and start coding!",
   "type": "library",
   "license": "MIT",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:framesofthesource/php-watcher.git"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Frames\\Mist\\": "src/"
@@ -21,7 +27,8 @@
   "require": {
     "php": "^8.2",
     "react/http": "^1.10",
-    "symfony/console": "^7.1"
+    "symfony/console": "^7.1",
+    "seregazhuk/php-watcher": "^0.7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^11.4"

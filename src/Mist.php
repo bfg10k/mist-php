@@ -97,6 +97,11 @@ class Mist
         return $endpoint;
     }
 
+    public static function config(): Config
+    {
+        return self::$instance->config;
+    }
+
     /**
      * Retrieve all registered endpoints.
      *

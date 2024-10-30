@@ -27,3 +27,8 @@ Mist::get('/api/user/{id}')
         }
     })
     ->delay(1000);
+
+// Define a dynamic response endpoint
+Mist::get('/api/users')
+    ->withHeaders(['Content-Type' => 'application/json'])
+    ->staticResponse('[{id:1, id:2}]');
